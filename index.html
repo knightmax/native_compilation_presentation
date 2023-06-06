@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>COP Awards 2023</title>
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+		
+		<style>
+			.reveal h5, .reveal h1 {
+				color: #007690;
+				text-shadow: 1px 1px 2px white;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-background-video="assets/rocket_launch.mp4" data-background-color="#000000">
+					<h5 style="color: #007690;">Décollez avec la compilation native en Java : Boostez vos performances et économisez de l'énergie !</h5>
+					<img width="500" data-src="assets/Graalvm.png" alt="GraalVM">
+					
+						<aside class="notes">
+							Minimiser l'utilisation des ressources et la scalabilité sont des préoccupations majeures sur le cloud. Je vais tenter de vous présenter ce qui a été fait au sein de la COP pour utiliser GraalVM Native Image.
+						</aside>
+				</section>
+				<section>
+					<section data-background="assets/duke.png" data-background-size="60%">
+						<h1 style="color: #007690;">Mode historique de la compilation Java</h1>
+					
+						<aside class="notes">
+							Tout d'abord un petit focus sur l'existant.
+						</aside>
+					</section>
+					<section>
+						<h5>La JVM</h5>
+						<img width="800" data-src="assets/JVM.png" alt="JVM">
+						
+						<aside class="notes">
+							La JVM est un très beau produit de l'ingénierie, je ne vais pas rentrer dans le détails vu le temps limité que j'ai pour cette présentation, mais si cela vous intéresse ça pourrait faire l'objet d'un BBL à venir.
+						</aside>
+					</section>
+					<section>
+						<h5>Limitations et contraintes</h5>
+						<p>vérification du code...</p>
+						<p class="fragment">chargement des classes ...</p>
+						<p class="fragment">compilation dynamique ...</p>
+						<p class="fragment">collecte des informations de profilage ...</p>
+						<p class="fragment">mémoire nécessaire pour stocker les infos de profilage ...</p>
+						<p class="fragment">temps et mémoire nécessaire au démarrage ...</p>
+						
+						<aside class="notes">
+							Même si sur le principe l'approche utilisé en mode JVM semble idéale pour exécuter une application, elle s'accompagne de coûts et de compromis. 
+						</aside>
+					</section> 
+					<section data-background-video="assets/explosion.mp4" data-background-color="#000000" data-background-video-loop="loop">
+						<h5 style="color: #007690;">Dans un contexte cloud, avec ces opérations cumulées, le temps de démarrage et la mémoire affectent directement le coût de déploiement d'une application</h5>
+					</section> 
+				</section>
+				<section>
+					<section>
+						<h1>La compilation native en Java</h1>
+						<img width="500" data-src="assets/native-image.png" alt="Native Image">
+
+						<aside class="notes">
+							Performances optimisées, latence minimale, utilisation efficace des ressources
+						</aside>
+					</section>
+					<section style="font-size: 0.7em;">
+						<h5>Principe de la compilation native</h5>
+						<p>Contrairement au mode JIT, où la compilation et l'exécution se produisent en même temps, en mode AOT, le compilateur effectue toutes les compilations pendant la construction, avant l'exécution :</p>
+						
+						<p class="fragment">Analyse des Points-to</p>
+						<p class="fragment">Initialisations au moment de la génération</p>
+						<p class="fragment">Heap snapshotting</p>
+						
+						<img width="500" data-src="assets/native-image-build-process.webp" alt="Native Image Build Process">
+						
+						<aside class="notes">
+							- détermination des classes, méthodes et champs Java sont accessibles au moment de l'exécution<br>
+							- par défaut à l'exécution mais à la construction si possible<br>
+							- Pendant le processus de création d'image, les objets Java alloués par les initialiseurs statiques et tous les objets accessibles sont écrits dans la heap
+						</aside>
+					</section>
+				</section>
+				<section>
+					<section data-background-video="assets/question.mp4" data-background-color="#000000">
+						<h1 style="color: #007690;">Et Concrètement</h1>
+					</section>
+					<section>
+						<img width="500" data-src="assets/spring-boot-logo.png" alt="Spring Boot 3">
+						<img class="fragment" width="200" data-src="assets/Honey.png" alt="Honey"><br>
+						<img class="fragment" width="200" data-src="assets/openapi.png" alt="OpenAPI">
+						<img class="fragment" width="200" data-src="assets/SOAP.png" alt="SOAP">
+						<img class="fragment" width="200" data-src="assets/mrm.png" alt="MRM">
+							
+						<aside class="notes">
+							Tout cela est possible grâce à Spring Boot 3<br>
+							Le nécessaire a été fait côté Honey pour toutes les API développées dans le département EIP/MRM<br>
+							Les orchestrations SOAP et REST sont gérées, ainsi que FARM pour MRM
+						</aside>
+					</section>
+					<section data-background-video="assets/native_build.mp4" data-background-color="#000000">
+					</section>
+					<section>
+						<pre data-id="code-animation"><code class="hljs shell" data-trim data-line-numbers>
+							LOGIN+A12345@DESKTOP MINGW64 /c/Workspace/honey/api/target (main)
+							$ ls -lrt panoramasante-api*
+							-rw-r--r-- 1    636020 panoramasante-api.jar.original
+							-rw-r--r-- 1  56511090 panoramasante-api.jar
+							-rw-r--r-- 1 150600440 panoramasante-api
+							-rw-r--r-- 1        32 panoramasante-api.build_artifacts.txt
+						</code></pre>
+					</section>
+					<section>
+						<pre data-id="code-animation">
+							<code class="hljs shell" data-trim data-line-numbers="1-4|6-9|11-13"><script type="text/template">
+								$ docker images
+								REPOSITORY                                 SIZE
+								honey/cop-award-panorama                   267MB
+								project/apicollexp/eip/panoramasante-api   762MB
+								...
+								$ docker history project/apicollexp/eip/panoramasante-api:latest
+								COPY opentelemetry.jar  14MB    buildkit.dockerfile.v0
+								COPY api.jar            54.4MB  buildkit.dockerfile.v0
+								/bin/sh                 579MB   FROM factory/os/linux:ubi9-minimal
+								...
+								$ docker history honey/cop-award-panorama:latest
+								api                     153MB   buildkit.dockerfile.v0
+								/bin/sh                 18.3MB  FROM os/linux/ubi9/ubi-minimal:latest
+								...
+							</script></code>
+						</pre>
+					</section>
+					<section data-background-video="assets/startup-jar.mp4" data-background-color="#000000">
+					</section>
+					<section data-background-video="assets/startup-native.mp4" data-background-color="#000000">
+					</section>
+					<section>
+						<h1>Memory Footprint</h1>
+						<div class="r-stack">
+							<img class="fragment" width="500" data-src="assets/memory-jvm.png" alt="Memory JVM">
+							<img class="fragment" width="500" data-src="assets/memory-native.png" alt="Memory Native">
+						</div>
+					</section>
+				</section>
+				<section>
+					<section data-background-video="assets/chantier.mp4" data-background-color="#000000">
+						<h5 style="font-family: Calibri; color: #FFFFFF; text-shadow: 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px  3px 0 #000, 3px  3px 0 #000;">Attention à vos use cases, étudiez bien votre contexte avant de partir sur la compilation native</h5>
+					</section>
+					<section>
+						<h5>Un équilibre à trouver</h5>
+						<img width="900" data-src="assets/aot-vs-jit.avif" alt="AOT vs JIT">
+					</section>
+					<section>
+						<h5>La technologie coche de nombreuses cases par rapport à notre stratégie</h5>
+						<img class="fragment" width="200" data-src="assets/OpenShift.png" alt="OpenShift">
+						<img class="fragment" width="200" data-src="assets/kubernetes.png" alt="kubernetes">
+						<img class="fragment" width="200" data-src="assets/finops.png" alt="finops">
+						<img class="fragment" width="150" data-src="assets/green-it.png" alt="green-it">
+					</section>
+					<section data-background-video="assets/futur.mp4" data-background-color="#000000">
+						<h5 style="color: #007690;">Ce n'est que le 1er pas, le futur est devant nous</h5>
+							
+						<aside class="notes">
+							Nous venons juste de poser les 1ère briques pour faciliter l'utilisation de l'outils.
+							Comme toutes les librairies Open Source citées plus tôt, il ne tient qu'à nous d'élargir le support.
+							Sans parler de tout ce qu'il sera fait côté équipe GraalVM.
+						</aside>
+					</section>
+				</section>
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/markdown/markdown.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				hashOneBasedIndex: true,
+				respondToHashChanges: true,
+				history: true,
+				autoPlayMedia: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
